@@ -1,0 +1,391 @@
+@font-face {
+    src: url(Roboto-Bold.ttf);
+    font-family: roboto_bolg;
+}
+
+
+body {
+    background-color: #0f0f0f;
+    color: white;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    font-family: roboto_bolg;
+    cursor: default;
+    text-align: center;
+    width: 100vw;
+}
+
+br {
+  user-select: none;
+}
+
+.playbody {
+  overflow-y: scroll;
+}
+
+h1 {
+  padding: 0px;
+  margin: 0px;
+}
+
+
+p {
+  font-size: 1.25rem;
+  color: rgb(228, 228, 228);
+}
+
+input {
+  background-color: #1e1e1e;
+  border: 1px solid rgb(78, 78, 78);
+  color: white;
+  font-size: 1.5rem;
+  border-radius: 10px;
+}
+
+input[type=submit] {
+  margin-top: 10px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+input[type=submit]:disabled {
+  color: rgb(121, 121, 121);
+  cursor: default;
+}
+
+.errortext {
+  color: rgb(255, 83, 83);
+}
+
+.heehaa {
+  color: rgb(218, 218, 218);
+}
+
+.hide {
+  width: 0px;
+  height: 0px;
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+}
+
+#extreme {
+  transform: translate(0px, 1.5px);
+}
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+  
+  /* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+  
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  margin-left: 5px;
+  height: 25px;
+  width: 25px;
+  background-color: #2a2a2a;
+  border-radius: 7.5px;
+}
+  
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+    background-color: #373737;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+    background-color: #2196F3;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+
+#usernametm {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  margin: 0px;
+  padding: 0px;
+  z-index: 1000;
+  text-shadow: black 0px 0px 5px;
+}
+
+.waithost-playerlist {
+  background-color: #1e1e1e;
+  min-width: 80vw;
+  width: fit-content;
+  min-height: 20rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  word-wrap: normal;
+  border-radius: 10px;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #474747;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.playerlist-name {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.card {
+  background-color: red;
+  width: 11rem;
+  height: 16rem;
+  font-size: 0.8rem;
+  border-radius: 15px;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  z-index: 50;
+}
+
+.card h2 {
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.bc {
+  background-color: black;
+  color: white;
+  box-shadow: #ffffff15 0px 0px 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.wc {
+  background-color: white;
+  color: black;
+  box-shadow: #00000050 0px 0px 10px;
+}
+
+.card .watermark {
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
+  margin: 0px;
+  color: #818181;
+}
+
+.bc .watermark {
+  color: #bdbdbd;
+}
+
+.playable_cards {
+  margin-top: 10px;
+  width: 100vw;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  z-index: 50;
+}
+
+.card {
+  cursor: pointer;
+  transition-duration: 250ms;
+}
+
+.card:hover {
+  transform: scale(1.075);
+  z-index: 100;
+}
+
+
+.round-done {
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #3e3e3e;
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin-top: 10px;
+  transition-duration: 250ms;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.round-done:hover {
+  background-color: #313131;
+}
+
+.round-done:disabled {
+  color: #827f7f;
+}
+
+.rd-sel {
+  background-color: #2b3f26;
+}
+
+.rd-sel:hover {
+  background-color: #3d5537;
+}
+
+
+.uservote {
+  width: fit-content;
+  background-color: #252525;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition-duration: 250ms;
+  box-shadow: #ffffff00 0px 0px 10px;
+  
+  z-index: 50;
+}
+
+.uservote:hover {
+  transform: scale(1.075);
+  box-shadow: #ffffff15 0px 0px 10px;
+  z-index: 100 !important;
+}
+
+.vote-cards {
+  display: flex;
+  gap: 5px;
+}
+
+.vp {
+  padding: 20px;
+}
+
+.uservote .card {
+  z-index: 50 !important;
+  transform: scale(1) !important;
+}
+
+.voteview {
+  z-index: 50 !important;
+  transform: scale(1) !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+
+.result_name {
+  transition: max-height 7.5s linear, opacity 250ms linear;
+  /*max-width: 11rem;
+  max-height: 90vh;*/
+  max-width: 100%;
+  max-height: 0px;
+  opacity: 0;
+  /* width: 100%; */
+  word-wrap: break-word;
+  margin-bottom: 5px;
+  margin-top: 0px;
+}
+
+
+.votepp {
+  margin-top: 10px;
+}
+
+.vote-cards .card {
+  cursor: pointer !important;
+}
+
+.chosen_card {
+  transform: scale(1.1) !important;
+  z-index: 100 !important;
+}
+
+.vote-cards .chosen_card {
+  background-color: #2b3f26;
+}
+
+.emoji {
+  height: 1em;
+  transform: translateY(5px);
+}
+
+
+@keyframes smfd {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+.submitted-name {
+  animation: smfd 100ms linear 1;
+}
+
+.results .card, .player .vote-cards .card {
+  cursor: default !important;
+}
+
+.results .uservote h2 {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}

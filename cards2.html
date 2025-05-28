@@ -2,11 +2,64 @@
 <html lang="">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>cards against a manatee</title>
+    <link rel="stylesheet" href="assets/game.css">
   </head>
   <body>
-    <header></header>
-    <main></main>
-    <footer></footer>
+
+
+    <div class="loadingpage bodypage" style="display:block;">
+
+      <div class="loading-wrapper">
+
+        <img class="spin" src="assets/manatee.png" style="z-index: 100;">
+        <img src="assets/manatee.png" style="z-index: 70;" >
+        <div class="spin" style="position: fixed; left: 10px; z-index: 90; animation-duration: 14s;">
+          <img style="height: 10vw; margin-right: 50vw; transform: rotate(-90deg);" src="assets/manatee2.png">
+        </div>
+
+        <div class="spin2" style="position: fixed; right: 10px; z-index: 110; animation-duration: 14s;">
+          <img style="height: 10vw; margin-right: 50vw; transform: rotate(-90deg);" src="assets/manatee-seacow.gif">
+        </div>
+
+        <img class="flash" src="assets/manatee3.png" style="z-index: 100; position: fixed; top: 10px;">
+        
+        <div style="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 200;">
+          <h1>loading....</h1>
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="homepage bodypage" style="display:none;">
+      <br>
+      <h1>cards against a manatee</h1>
+      <br>
+
+      <input type="text" class="player-name" placeholder="display name" style="margin-bottom: 0.5em; margin-top: 6em;"><br>
+      <input type="text" class="room-code" placeholder="room code"><br>
+      <p class="button" onclick="join_game()">join game</p>
+
+
+
+      <!-- <h3 style="display: flex; gap: 10px; justify-content: center;" class="toggle-wrapper">
+        <svg class="toggle" viewBox="0 0 2 1" onclick="toggle_button(0)" ja_id="0">
+          <circle cx="0.5" cy="0.5" r="0.5" class="background" />
+          <circle cx="1.5" cy="0.5" r="0.5" class="background" />
+          <rect x="0.5" y="0" width="1" height="1" class="background" />
+          <circle cx="0.5" cy="0.5" r="0.5" class="thumb" />
+        </svg>
+      
+        <span style="transform: translate(0px, 0.25em)">use km instead of mi</span>
+      </h3> -->
+
+    </div>
+
+    
+
+    <!-- <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script> -->
+    
+    <script src="cards2.js"></script>
+
   </body>
 </html>

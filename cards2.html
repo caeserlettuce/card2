@@ -8,7 +8,7 @@
   <body>
 
 
-    <div class="loadingpage bodypage" style="display:block;">
+    <div class="loadingpage bodypage active">
 
       <div class="loading-wrapper">
 
@@ -31,7 +31,7 @@
       
     </div>
 
-    <div class="homepage bodypage" style="display:none;">
+    <div class="lobbypage bodypage">
       <br>
       <h1>cards against a manatee</h1>
       <br>
@@ -40,18 +40,63 @@
       <input type="text" class="room-code" placeholder="room code"><br>
       <p class="button" onclick="join_game()">join game</p>
 
+      <p class="error-text">error text</p>
 
+    </div>
 
-      <!-- <h3 style="display: flex; gap: 10px; justify-content: center;" class="toggle-wrapper">
-        <svg class="toggle" viewBox="0 0 2 1" onclick="toggle_button(0)" ja_id="0">
-          <circle cx="0.5" cy="0.5" r="0.5" class="background" />
-          <circle cx="1.5" cy="0.5" r="0.5" class="background" />
-          <rect x="0.5" y="0" width="1" height="1" class="background" />
-          <circle cx="0.5" cy="0.5" r="0.5" class="thumb" />
-        </svg>
+    <div class="waitpage bodypage">
+      <br>
+      <h1>cards against a manatee</h1>
+      <br>
+
+      <img src="assets/manatee-seacow.gif">
+
+      <div class="nonhost-wait">
+        <h3>wait for the host to start the game. .....</h3>
+      </div>
+      <div class="host-wait" style="display: none;">
+        <h3>host wait area thing</h3>
+
+        <p class="button" onclick="start_game()">start game</p>
+      </div>
+
+    </div>
+
+    <div class="roundpage bodypage">
+      <br>
+      <h1>cards against a manatee</h1>
+      <br>
+      <div class="black-card-wrapper">
+
+        <div class="card black">
+          <h4>cards against a manatee</h4>
+          <h2>And for my next trick: the site is broken!</h2>
+        </div>
+      </div>
+      <br>
+      <div class="buttons">
+        <p class="button submitc defaulthide" onclick="submit_cards(1)">submit cards</p>
+        <p class="button usubmitc defaulthide" onclick="submit_cards(-1)">unsubmit cards</p>
+      </div>
+      <br>
+      <div style="flex-grow: 1;"> </div>
+      <div class="choice-zone">
+
+        
+      </div>
       
-        <span style="transform: translate(0px, 0.25em)">use km instead of mi</span>
-      </h3> -->
+      
+
+      <h3 class="username-corner">username</h3>
+
+    </div>
+
+    <div class="templates">
+
+      <div class="card white template">
+        <h4>cards against a manatee</h4>
+        <h2>And for my next trick: the site is broken!</h2>
+      </div>
 
     </div>
 

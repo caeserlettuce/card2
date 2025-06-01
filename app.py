@@ -32,18 +32,19 @@ game_data = {
     "white cards": {},
     "settings": {
         "rotating": True,
-        "hand size": 7
+        "hand size": 7,
+        "random hand": False
     }
 }
 
 
-game_data["players"] = [
-    "jesse",
-    "simon",
-    "eamon",
-    "sam",
-    "gavin"
-]
+# game_data["players"] = [
+#     "jesse",
+#     "simon",
+#     "eamon",
+#     "sam",
+#     "gavin"
+# ]
 
 # game_data["white cards"] = {"jesse": [{"name": "eamon"}]}
 
@@ -162,7 +163,12 @@ def refill_white_cards():
 
 def start_new_round():
 
+    print("STARTING NEW ROUND")
+
     game_data["round stage"] = 0
+    game_data["submitted"] = {}
+    game_data["users ready"] = []
+
 
     round_number = len(game_data["points"])
 
@@ -230,16 +236,35 @@ def route_main():
     return Response(get_file('cards2.html'))
 
 
-@app.route("/loading-status", methods=['GET'])
+@app.route("/loading-status", methods=['GET', 'POST'])
 def route_loading_status():
     #POST request
     # if (request.method == 'POST'):
-        # played_cards = request.get_json()
     
+    request_json = request.get_json()
+    
+    get_out = False
+
+    if game_data["game running"] == True:
+        if "username" in request_json and "room code" in request_json:
+            if request_json["username"] in game_data["players"] and request_json["room code"] == game_data["room code"]:
+                # is a real player
+                get_out = False
+            else:
+                get_out = True
+        else:
+            get_out = True
+    else:
+        get_out = True
+
     st = {
         "lobby": False,
-        "game running": False
+        "game running": False,
+        "get out": get_out
     }
+
+    if get_out == True:
+        print("get OUT")
 
     if game_data["game running"] == False:
         
@@ -312,9 +337,22 @@ def route_startgame():
     game_data["game running"] = True
     game_data["game segment"] = "game"
 
+    game_data["players"] = list(set(game_data["players"]))
+
     start_new_round()
 
     return "michael jackson: hee hee" # i cannot believe it will actually return this and accept it
+
+@app.route("/next-round", methods=['GET', 'POST'])
+def route_next_round():
+
+    # START GAME!!!
+
+    start_new_round()
+
+    return "michael jackson: hee hee" # i cannot believe it will actually return this and accept it
+
+
 
 
 @app.route("/game-status", methods=['GET', 'POST'])
@@ -325,7 +363,7 @@ def route_game_status():
 
     player_settings = request.get_json()
 
-    print(player_settings)
+    # print(player_settings)
 
     if player_settings["username"] in game_data["players"] and player_settings["room code"] == game_data["room code"]:
         # if a player is re-joining, or joining the game for the first time
@@ -338,21 +376,30 @@ def route_game_status():
         st["manatee"] = game_data["manatee"]            # provide manatee name
         st["submitted"] = game_data["submitted"]        # provide submitted cards
         st["users ready"] = game_data["users ready"]    # provude ready users
+        st["players"] = game_data["players"]            # provide players
+        st["points"] = game_data["points"]              # provide points
+
+        if len(game_data["points"]) > 0:                # provide winner
+            st["winner"] = game_data["points"][-1]["player"]
+        else:
+            st["winner"] = False
         
         st["cards"] = copy.deepcopy(game_data["white cards"][player_uname])     # provide user's hand
 
         # is manatee ???
         if game_data["manatee"] == player_uname:
             st["is manatee"] = True     # (i can technically do this client side but where's the fun in that)
-
+        else:
+            st["is manatee"] = False
         
         # server-side stuff
         
         if player_uname not in game_data["submitted"]:
             game_data["submitted"][player_uname] = []
             
-        if game_data["submitted"][player_uname] != player_settings["submitted"]:
-            game_data["submitted"][player_uname] = player_settings["submitted"]
+        if game_data["round stage"] == 0:
+            if game_data["submitted"][player_uname] != player_settings["submitted"]:
+                game_data["submitted"][player_uname] = player_settings["submitted"]
 
         # this should keep the server-side up to date with cards even if the user does not submit them
         
@@ -390,6 +437,44 @@ def route_submit_cards():
             if pl_uname in game_data["users ready"]:
                 game_data["users ready"].remove(pl_uname)
                 print("user " + pl_uname + " has unsubmitted their cards!")
+
+    return "michael jackson: hee hee" # i cannot believe it will actually return this and accept it
+
+@app.route("/end-round", methods=['GET', 'POST'])
+def route_endround():
+    
+    # END the round
+
+    game_data["round stage"] = 1
+
+
+    return "michael jackson: hee hee" # i cannot believe it will actually return this and accept it
+
+@app.route("/vote-card", methods=['GET', 'POST'])
+def route_votecard():
+    
+    # VOTE the card
+
+    request_json = request.get_json()
+
+    pl_vote = request_json["vote"]
+    pl_uname = request_json["username"]
+    pl_rmcod = request_json["room code"]
+
+    if pl_uname in game_data["players"] and pl_rmcod == game_data["room code"] and pl_uname == game_data["manatee"]:
+
+        # vote it up
+
+        point_json = {
+            "player": pl_vote,
+            "black card": game_data["black card"],
+            "cards": game_data["submitted"][pl_vote]
+        }
+
+        game_data["points"].append(point_json)
+
+        game_data["round stage"] = 2
+
 
     return "michael jackson: hee hee" # i cannot believe it will actually return this and accept it
 

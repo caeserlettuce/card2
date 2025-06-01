@@ -25,9 +25,12 @@
   --card-txt-white: #000000;
   --card-wmk-white: #868686;
   --card-glo-white: #000000;
+  --card-act-bg-white: #9dc5ff;
+  --card-act-wmk-white: #737373;
   --choice-bg: #1b1b1b;
   --card-group-bg: #2b2b2b;
   --card-glo-group: #00000080;
+  --pname-green: #a2ffa2;
 }
 
 ::-webkit-scrollbar {
@@ -263,7 +266,7 @@ input::placeholder {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  padding: 0.5em;
+  padding: 0.65em;
   padding-top: 0.75em;
   user-select: none;
   word-wrap: break-word;
@@ -293,6 +296,7 @@ input::placeholder {
   background-color: var(--card-bg-white);
   color: var(--card-txt-white);
   box-shadow: none;
+  box-sizing: border-box;
 }
 
 .card.white h4 {
@@ -313,23 +317,41 @@ input::placeholder {
 
 .card.active {
   transform: scale(105%, 105%);
+  background-color: var(--card-act-bg-white);
+  box-shadow: var(--card-glo-white) 0px 0px 10px;
+}
+
+.card.active h4 {
+  color: var(--card-act-wmk-white);
 }
 
 .card.active:hover {
-  box-shadow: var(--card-glo-white) 0px 0px 0px;
+  box-shadow: var(--card-glo-white) 0px 0px 10px;
   z-index: 0;
 }
 
 .buttons {
   width: 100vw;
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  align-items: center;
+  margin-top: 1.15em;
+}
+
+.flex-end {
+  flex-basis: 100%;
+}
+
+.buttons p {
+  user-select: none;
+  margin: 0px;
 }
 
 .buttons .button {
-  margin-left: 0px;
-  margin-right: 0px;
+  margin: 0px;
+  
 }
 
 .choice-zone {
@@ -357,6 +379,29 @@ input::placeholder {
   padding: 1em;
   border-radius: 20px;
   z-index: 1;
+}
+
+.card-group.col {
+  flex-direction: column;
+}
+
+.card-group .card-group {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  gap: 10px;
+  padding: 0px;
+  border-radius: 0px;
+}
+
+.card-group h3 {
+  margin-top: -0.25em;
+  margin-bottom: 0.1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  user-select: none;
 }
 
 .card-group.hoverable {
@@ -399,4 +444,35 @@ input::placeholder {
 
 .defaulthide {
   display: none;
+}
+
+.plreadytext {
+  margin-top: 1em !important;
+  margin-bottom: 1em !important;
+}
+
+
+.playername {
+  transition-duration: 250ms;
+  height: min-content;
+  margin: 0px;
+  user-select: none;
+}
+
+.playername.green {
+  color: var(--pname-green);
+}
+
+.emoji {
+  height: 1em;
+  user-select: none;
+}
+
+.explosion {
+  position: absolute;
+  top: 1em;
+  left: 0.3em;
+  transform: scale(1.25);
+  user-select: none;
+  z-index: 10;
 }

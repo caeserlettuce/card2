@@ -73,16 +73,21 @@
           <h2>And for my next trick: the site is broken!</h2>
         </div>
       </div>
-      <br>
+
       <div class="buttons">
         <p class="button submitc defaulthide" onclick="submit_cards(1)">submit cards</p>
         <p class="button usubmitc defaulthide" onclick="submit_cards(-1)">unsubmit cards</p>
+        <p style="margin: 0px;" class="card-number defaulthide">choose up to <span class="card-number">1</span> card<span class="card-number-plural"></span>.</p>
+        <p class="button endround defaulthide" onclick="end_round()">end round</p>
+        <p class="button nextround defaulthide" onclick="next_round()">next round</p>
+        <p class="flex-end defaulthide plreadytext">players that are ready:</p>
+        <p class="flex-end defaulthide plwinnertext">player won! yay!</p>
       </div>
-      <br>
-      <div style="flex-grow: 1;"> </div>
+      <div style="flex-grow: 1;"></div>
       <div class="choice-zone">
 
         
+
       </div>
       
       
@@ -98,11 +103,14 @@
         <h2>And for my next trick: the site is broken!</h2>
       </div>
 
+      <h3 class="playername template">player neame</h3>
+
     </div>
 
     
 
     <!-- <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script> -->
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
     
     <script src="cards2.js"></script>
 

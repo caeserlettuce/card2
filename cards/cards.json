@@ -1,0 +1,14 @@
+{
+    "black": [
+        {
+            "name": "hello world 1",
+            "cards": 1
+        }
+
+    ],
+    "white": [
+        {
+            "name": "hello world 2"
+        }
+    ]
+}

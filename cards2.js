@@ -13,6 +13,42 @@ var cards_by_id_submitted = [];
 var round_data = {};
 var prev_round_data = {};
 
+var manatee_rotating = false;
+var random_hand = false;
+var cardpack_list = [];
+var packs_enabled = [];
+var cardpack_edit = {};
+var edit_scroll  = false;
+var edit_scroll_bottom = false;
+var cardpack_url = "";
+var selected_card_id = false;
+var selected_card = {
+  "original": {},
+  "new": {}
+};
+var card_removed = {
+  "id": false,
+  "black": false
+}
+var reselect_card = false;
+var rf_black = false;
+var rf_card = {};
+
+
+
+document.querySelector(".info-pane input.card-name").addEventListener("keydown", (e) => {
+  if (e.which == 13) {
+    reselect_card = true;
+    save_card_change();
+  }
+})
+document.querySelector(".info-pane input.cards-amt").addEventListener("keydown", (e) => {
+  if (e.which == 13) {
+    reselect_card = true;
+    save_card_change();
+  }
+})
+
 
 var localstorage_settings = JSON.parse(localStorage.getItem("manatee_settings"));
 
@@ -38,25 +74,660 @@ function jstr(obj_in) {
   return JSON.stringify(obj_in);
 }
 
+function set_settings_init(settings_in) {
+
+  if (settings_in["rotating"] == true) {
+    toggle_button(0);
+  }
+  if (settings_in["random hand"] == true) {
+    toggle_button(1);
+  }
+
+  document.querySelector("input.hand-size").value = settings_in["hand size"];
+
+}
+
+function set_setting(key, value) {
+
+  var data_in = jcopy(manatee_settings)
+  data_in["setting"] = key;
+  data_in["value"] = value;
+
+  fetch('/set-setting', {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data_in)
+  })
+  .then(function (response) {
+
+  }).catch((error) => {
+    console.error("[GET] API down!", error);
+  });
+
+
+}
+
+
 function toggle_button(id) {
   var enabledja = document.querySelector(`.toggle[ja_id="${id}"]`).classList.contains("enabled");
   if (enabledja == false) {
     document.querySelector(`.toggle[ja_id="${id}"]`).classList.add("enabled");      // ENABLING
     if (id == 0) {
-      kilometers = true;
+      set_setting("rotating", true);
+    } else if (id == 1) {
+      set_setting("random hand", true);
     }
   } else {
     document.querySelector(`.toggle[ja_id="${id}"]`).classList.remove("enabled");   // DISABLING
     if (id == 0) {
-      kilometers = false;
+      set_setting("rotating", false);
+    } else if (id == 1) {
+      set_setting("random hand", false);
     }
   }
 }
+
+function update_hand_size_setting() {
+  var hand_size = parseInt(document.querySelector("input.hand-size").value);
+  if (hand_size != NaN && hand_size > 0) {
+    set_setting("hand size", hand_size);
+  }
+}
+
 
 function set_screen(name) {
   document.querySelector(".bodypage.active").classList.remove("active");
   document.querySelector(`.bodypage.${name}`).classList.add("active");
 }
+
+function open_card_picker() {
+
+  // card picker
+
+  var data_out = jcopy(manatee_settings);
+  
+  fetch('/get-cardpacks', {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data_out)
+  })
+  .then(function (response) {
+    return response.json();
+  }).then(function (text) {
+    // console.log(text)
+    cardpack_list = jcopy(text["packs"]);
+    packs_enabled = jcopy(text["enabled"]);
+
+    cardpack_list.sort();
+
+    set_screen("cardpackpage");
+
+    // display cardpacks
+
+    document.querySelector(".packlist").innerHTML = "";
+
+    for (i in cardpack_list) {
+
+      var pack_node = document.querySelector(".templates .pack.template").cloneNode(true);
+      pack_node.classList.remove("template");
+      pack_node.querySelector("svg").setAttribute("onclick", `toggle_pack('${cardpack_list[i]}')`);
+      pack_node.querySelector("svg").setAttribute("pa_id", `${cardpack_list[i]}`);
+      pack_node.querySelector("p").setAttribute("onclick", `edit_pack('${cardpack_list[i]}')`);
+      pack_node.querySelector("span").innerHTML = `${cardpack_list[i]}`;
+
+      document.querySelector(".packlist").appendChild(pack_node);
+
+      if (packs_enabled.includes(`${cardpack_list[i]}`)) {
+        pack_node.querySelector("svg").classList.add("enabled");
+      }
+    }
+
+
+      
+  }).catch((error) => {
+    console.error("[GET] API down!", error);
+  });
+  
+
+
+
+
+}
+
+function toggle_pack(id) {
+  var enabledja = document.querySelector(`.toggle[pa_id="${id}"]`).classList.contains("enabled");
+  if (enabledja == false) {
+    document.querySelector(`.toggle[pa_id="${id}"]`).classList.add("enabled");      // ENABLING
+  } else {
+    document.querySelector(`.toggle[pa_id="${id}"]`).classList.remove("enabled");   // DISABLING
+  }
+
+  enabledja = !enabledja;
+
+  var data_out = jcopy(manatee_settings);
+  data_out["pack"] = id;
+  data_out["bool"] = enabledja;
+
+  fetch('/toggle-cardpack', {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data_out)
+  })
+  .then(function (response) {
+      
+  }).catch((error) => {
+    console.error("[GET] API down!", error);
+  });
+}
+
+
+
+function make_cardlist_header(black) {
+
+  var out_node = document.querySelector(".templates .list-header.template").cloneNode(true);
+  out_node.classList.remove("template");
+  if (black == true) {
+    out_node.classList.add("black");
+    out_node.querySelector("h3").innerHTML = "black cards";
+    out_node.querySelector(".add-card").setAttribute("onclick", "add_card(true)");
+    out_node.querySelector(".add-card").innerHTML = "add black card";
+    out_node.querySelector(".rapid-fire").setAttribute("onclick", "rapid_fire(true)");
+  } else {
+    out_node.classList.add("white");
+    out_node.querySelector("h3").innerHTML = "white cards";
+    out_node.querySelector(".add-card").setAttribute("onclick", "add_card(false)");
+    out_node.querySelector(".add-card").innerHTML = "add white card";
+    out_node.querySelector(".rapid-fire").setAttribute("onclick", "rapid_fire(false)");
+  }
+
+  var real_out_node = document.createElement("div");
+  real_out_node.classList.add("list-header-sticky");
+  real_out_node.appendChild(out_node)
+  return real_out_node
+}
+
+function make_cardlist_entry(name, id, black) {
+
+  var out_node = document.querySelector(".templates .card-entry.template").cloneNode(true);
+  out_node.classList.remove("template");
+  out_node.querySelector("h3").innerHTML = name;
+  out_node.querySelector(".button").setAttribute("onclick", `remove_card(${id}, ${black})`);
+  out_node.setAttribute("c-id", `${id}`)
+  
+  out_node.addEventListener('click', (e) => {
+    if (typeof e.target == typeof document.body) {
+      if (e.target.classList.contains("button") == false) {
+
+        var is_black = false;
+        if (e.target.classList.contains("black")) {
+          is_black = true;
+        }
+        var c_id = parseInt(e.target.getAttribute("c-id"));
+        entry_click(c_id, is_black);
+      }
+    }
+  });
+  out_node.addEventListener('mouseover', (e) => {
+    if (typeof e.target == typeof document.body) {
+
+      var target = e.target;
+
+      if (target.classList.contains("button")) {
+        target = target.parentNode;
+      }
+        
+      var is_black = false;
+      if (target.classList.contains("black")) {
+        is_black = true;
+      }
+      var c_id = parseInt(target.getAttribute("c-id"));
+      entry_hover(c_id, is_black);
+      
+    }
+  });
+  out_node.addEventListener('mouseout', (e) => {
+    if (typeof e.target == typeof document.body) {
+
+      render_current_card_selection();
+      
+    }
+  });
+
+  if (black == true) {
+    out_node.classList.add("black");
+  } else {
+    out_node.classList.add("white");
+  }
+  return out_node
+}
+
+function save_card_change() {
+
+  if (selected_card["original"]["name"]) {
+
+    var og = selected_card["original"];
+    
+    var card_name = document.querySelector(".info-pane input.card-name").value;
+    var cards_amt = document.querySelector(".info-pane input.cards-amt").value;
+
+    if (selected_card["original"]["cards"]) {
+      // black card
+      cards_amt = parseInt(cards_amt);
+      if (cards_amt != NaN) {
+        // NOT nan
+        if (cards_amt > 0) {
+          // yay
+          console.log("cards_amt good!");
+        } else {
+          cards_amt = og["cards"];  
+        }
+      } else {
+        cards_amt = og["cards"];
+      }
+      selected_card["new"]["cards"] = cards_amt;
+    }
+
+    card_name = card_name.replaceAll("<br>", "\n");
+
+    selected_card["new"]["name"] = card_name;
+
+    if (JSON.stringify(selected_card["new"]) != JSON.stringify(selected_card["original"]) && selected_card["new"]["name"] != "") {
+      // change!
+      console.log("save card change!");
+      console.log(selected_card);
+
+      var data_out = jcopy(manatee_settings);
+  
+      data_out["change"] = selected_card;
+      data_out["pack"] = cardpack_url;  
+
+      fetch('/edit-card', {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data_out)
+      })
+      .then(function (response) {
+        return response.json();
+      }).then(function (text) {
+        console.log(text)
+    
+        if (text["edited"]) {
+          if (text["edited"] == true) {
+            edit_pack(cardpack_url, true);
+          }
+        }
+    
+          
+      }).catch((error) => {
+        console.error("[GET] API down!", error);
+      });
+
+    }
+    
+  }
+
+}
+
+
+function render_info_card(name, black) {
+
+  if (black == true) {
+    document.querySelector(".info-pane .card").classList.remove("white");
+    document.querySelector(".info-pane .card").classList.add("black");
+    document.querySelector(".info-pane .card h2").innerHTML = card_text_process(name);
+  } else {
+    document.querySelector(".info-pane .card").classList.add("white");
+    document.querySelector(".info-pane .card").classList.remove("black");
+    document.querySelector(".info-pane .card h2").innerHTML = card_text_process(name);
+
+  }
+}
+
+function render_current_card_selection() {
+
+  if (selected_card["new"]["name"]) {
+    var is_black = false;
+    if (selected_card["original"]["cards"]) {
+      is_black = true;
+    }
+  
+    render_info_card(selected_card["new"]["name"], is_black);
+  }
+  
+}
+
+function entry_click(id, black, dont_save=false) {
+
+  if (dont_save == false) {
+    save_card_change();
+  }
+
+  selected_card_id = id;
+
+  if (black == true) {
+    selected_card = {
+      "original": jcopy(cardpack_edit["black"][id]),
+      "new": jcopy(cardpack_edit["black"][id])
+    }
+  } else {
+    selected_card = {
+      "original": jcopy(cardpack_edit["white"][id]),
+      "new": jcopy(cardpack_edit["white"][id])
+    }
+  }
+  
+
+  var card_data = {};
+
+  document.querySelector(".info-pane input.card-name").value = "";
+  document.querySelector(".info-pane input.cards-amt").value = "";
+
+  try {
+    document.querySelector(`.card-entry.active`).classList.remove("active");
+  } catch (err) {
+
+  }
+  
+
+  if (black == true) {
+    card_data = cardpack_edit["black"][id];
+    document.querySelector(".info-pane input.cards-amt").disabled = false;
+    document.querySelector(".info-pane input.card-name").value = cardpack_edit["black"][id]["name"];
+    document.querySelector(".info-pane input.cards-amt").value = cardpack_edit["black"][id]["cards"];
+    render_info_card(cardpack_edit["black"][id]["name"], true);
+    
+    document.querySelector(`.card-entry.black[c-id="${id}"]`).classList.add("active");
+  } else {
+    card_data = cardpack_edit["white"][id];
+    document.querySelector(".info-pane input.cards-amt").disabled = true;
+    document.querySelector(".info-pane input.card-name").value = cardpack_edit["white"][id]["name"];
+    render_info_card(cardpack_edit["white"][id]["name"], false);
+
+    document.querySelector(`.card-entry.white[c-id="${id}"]`).classList.add("active");
+  }
+
+
+}
+
+function entry_hover(id, black) {
+
+  if (document.activeElement.tagName != "INPUT") {
+    // do
+    if (black == true) {
+      render_info_card(cardpack_edit["black"][id]["name"], true);
+    } else {
+      render_info_card(cardpack_edit["white"][id]["name"], false);
+    }
+  }
+}
+
+
+function edit_pack(pack_in, scroll=false) {
+
+  cardpack_edit = {};
+  cardpack_url = pack_in;
+
+  edit_scroll_bottom = false;
+
+  if (scroll == true) {
+    edit_scroll = document.querySelector(".card-list").scrollTop;
+
+    var scroll_max = document.querySelector(".card-list").clientHeight - document.querySelector(".card-list").scrollHeight;
+
+    var scroll_bottom_tm = document.querySelector(".card-list").scrollHeight - document.querySelector(".card-list").clientHeight - document.querySelector(".card-list").scrollTop;
+
+    if (scroll_bottom_tm <= 30) {
+      edit_scroll_bottom = true;
+    }
+
+  } else {
+    edit_scroll = 0;
+  }
+
+  var data_out = jcopy(manatee_settings);
+  data_out["pack"] = pack_in;
+
+  fetch('/get-cardpack', {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data_out)
+  })
+  .then(function (response) {
+    return response.json();
+  }).then(function (text) {
+    console.log(text)
+
+    if (text["white"] && text["black"]) {
+
+      // yay cardpack now edit show tm
+
+      cardpack_edit = jcopy(text);
+
+
+      var cardlist_el = document.querySelector(".pack-editor .card-list");
+
+      cardlist_el.innerHTML = "";
+      document.querySelector(".info-pane input.card-name").value = "";
+      document.querySelector(".info-pane input.cards-amt").value = "";
+
+      // var header_back_cover = document.createElement("div");
+      // header_back_cover.classList.add("header-back-cover");
+      // cardlist_el.appendChild(header_back_cover);
+
+      // black cards
+      cardlist_el.appendChild(make_cardlist_header(true));
+
+      for (car in cardpack_edit["black"]) {
+        cardlist_el.appendChild(make_cardlist_entry(cardpack_edit["black"][car]["name"], car, true));
+      }
+
+      // white cards
+      cardlist_el.appendChild(make_cardlist_header(false));
+
+      for (car in cardpack_edit["white"]) {
+        cardlist_el.appendChild(make_cardlist_entry(cardpack_edit["white"][car]["name"], car, false));
+      }
+
+      // scroll
+
+      if (edit_scroll_bottom == true) {
+        console.log("EID ITSCREOK ");
+        document.querySelector(".card-list").scrollTop = document.querySelector(".card-list").clientHeight;;
+      } else {
+        document.querySelector(".card-list").scrollTop = edit_scroll;
+      }
+
+      if (reselect_card == true) {
+        reselect_card = false;
+
+        var is_black = false;
+        if (selected_card["original"]["cards"]) {
+          is_black = true;
+        }
+
+        entry_click(selected_card_id, is_black, true);
+        document.activeElement.blur();
+      }
+
+      
+
+      set_screen("packeditorpage");
+
+      
+    }
+
+  }).catch((error) => {
+    console.error("[GET] API down!", error);
+  });
+
+
+}
+
+
+function remove_card(id, black) {
+
+  if ( confirm("are you sure you want to remove this carD????") == true) {
+    var card_out;
+
+    if (black == true) {
+      card_out = cardpack_edit["black"][id];
+    } else {
+      card_out = cardpack_edit["white"][id];
+    }
+  
+    card_removed["id"] = id;
+    card_removed["black"] = black;
+  
+    var data_out = jcopy(manatee_settings);
+  
+    data_out["card"] = card_out;
+    data_out["pack"] = cardpack_url;
+  
+    fetch('/remove-card', {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(data_out)
+    })
+    .then(function (response) {
+      return response.json();
+    }).then(function (text) {
+      console.log(text)
+  
+      if (text["removed"]) {
+        if (text["removed"] == true) {
+          edit_pack(cardpack_url, true);
+        }
+      }
+  
+        
+    }).catch((error) => {
+      console.error("[GET] API down!", error);
+    });
+  
+  }
+}
+
+function add_card(black, data=false) {
+
+  var data_out = jcopy(manatee_settings);
+  
+  data_out["black"] = black;
+  data_out["pack"] = cardpack_url;
+  data_out["data"] = data;
+
+  fetch('/add-card', {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data_out)
+  })
+  .then(function (response) {
+    return response.json();
+  }).then(function (text) {
+    console.log(text)
+
+    if (text["added"]) {
+      if (text["added"] == true) {
+        // alert("uay");
+        edit_pack(cardpack_url, true);
+      }
+    }
+
+      
+  }).catch((error) => {
+    console.error("[GET] API down!", error);
+  });
+
+}
+
+function rapid_fire(black) {
+  rf_black = false;
+  rf_card = {};
+
+  if (black == true) {
+    rf_black = true;
+    document.querySelector(".rf-cards-amt").disabled = false;
+  } else {
+    document.querySelector(".rf-cards-amt").disabled = true;
+  }
+  document.querySelector("input.rf-card-name").value = "";
+  document.querySelector("input.rf-cards-amt").value = "";
+
+  setTimeout( () => {
+    document.querySelector("input.rf-card-name").focus();
+  }, 20);
+  
+
+
+  document.querySelector(".rapidfire").style.display = "";
+}
+
+function leave_rapid_fire() {
+  document.querySelector(".rapidfire").style.display = "none";
+  rf_card = {};
+}
+
+document.querySelector("input.rf-card-name").addEventListener("keydown", (e) => {
+
+  if (e.which == 13) {
+    // hitted entered
+    rf_card["name"] = document.querySelector("input.rf-card-name").value;
+
+    if (rf_black == true) {
+      document.querySelector("input.rf-cards-amt").focus();
+    } else {
+      // white card
+      // save
+      add_card(false, rf_card);
+      document.querySelector("input.rf-card-name").value = "";
+      document.querySelector("input.rf-cards-amt").value = "";
+    }
+  } else if (e.which == 27) {
+    // esc
+    leave_rapid_fire();
+  }
+});
+document.querySelector("input.rf-card-name").addEventListener("keyup", (e) => {
+  render_info_card(card_text_process(document.querySelector("input.rf-card-name").value), rf_black);
+});
+document.querySelector("input.card-name").addEventListener("keyup", (e) => {
+  var sel_black = false;
+  if (selected_card["original"]["cards"]) {
+    sel_black = true;
+  }
+  render_info_card(card_text_process(document.querySelector("input.card-name").value), sel_black);
+});
+
+document.querySelector("input.rf-cards-amt").addEventListener("keydown", (e) => {
+  if (e.which == 13) {
+    // hitted entered
+    var cards_amt = document.querySelector("input.rf-cards-amt").value;
+
+    cards_amt = parseInt(cards_amt);
+    if (cards_amt != NaN) {
+      // NOT nan
+      if (cards_amt > 0) {
+        // yay
+        console.log("cards_amt good!");
+      } else {
+        cards_amt = 1;
+      }
+    } else {
+      cards_amt = 1;
+    }
+  
+    rf_card["cards"] = cards_amt;
+    
+    add_card(true, rf_card);
+    document.querySelector("input.rf-card-name").value = "";
+    document.querySelector("input.rf-cards-amt").value = "";
+
+    document.querySelector("input.rf-card-name").focus();
+    
+  } else if (e.which == 27) {
+    // esc
+    leave_rapid_fire();
+  }
+});
 
 
 function king_name(name) {
@@ -109,6 +780,21 @@ function join_game() {
       }, 2000)
     }
 
+
+    fetch('/get-settings', {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(manatee_settings)
+    })
+    .then(function (response) {
+      return response.json();
+    }).then(function (text) {
+      set_settings_init(text);
+      
+
+    }).catch((error) => {
+      console.error("[GET] API down!", error);
+    });
       
       
   }).catch((error) => {
@@ -220,7 +906,8 @@ function card_text_process(text_in) {
   var blank_space = `_____________`
 
   var text_out = `${text_in}`.replaceAll("\n", "<br>");
-  text_out = text_out.replace(/_{2,}/, blank_space);
+  text_out = `${text_in}`.replaceAll("\\n", "<br>");
+  text_out = text_out.replaceAll(/_{2,}/g, blank_space);
   text_out = text_out.replaceAll(blank_space, `<span style="display: inline-block">${blank_space}</span>`);
 
   text_out = text_out.replaceAll("_", `<span style="display: inline-block; transform: scale(1.1, 1);">_</span>`);
@@ -283,7 +970,7 @@ function render_submissions(explosions=false) {
       var is_winner = false;
 
       if (round_data["winner"]) {
-        if (pl == round_data["winner"]) {
+        if (pl == round_data["winner"] && explosions == true) {
           winner_crown = king_name(`${pl}`);
           is_winner = true;
         }
@@ -374,6 +1061,7 @@ function interval_function() {
           // LOBBY TIME!!
             set_screen("lobbypage");
             game_stage = 1;
+
         } else if (text["game running"] == true && text["get out"] == false) {
           game_stage = 2; // GAME PLAY PLAY GAME
         }
@@ -401,7 +1089,7 @@ function interval_function() {
     .then(function (response) {
       return response.json();
     }).then(function (text) {
-      console.log(text)
+      // console.log(text)
       
       
       if (text["game running"] == true) {
@@ -461,6 +1149,7 @@ function interval_function() {
 
         if (round_stage == 0) {         // init round stage 0
           cards_submitted = [];
+          cards_by_id_submitted = [];
 
           if (round_data["is manatee"] == false) {  // for people who are NOT the manatee
 
@@ -494,6 +1183,7 @@ function interval_function() {
 
           }
 
+
           
 
 
@@ -511,7 +1201,10 @@ function interval_function() {
           
           document.querySelector(".plwinnertext").innerHTML = `${round_data["winner"]} won this round!`;
           document.querySelector(".plwinnertext").classList.add("show");
-          document.querySelector(".button.nextround").classList.add("show");
+
+          if (round_data["is manatee"] == true) {
+            document.querySelector(".button.nextround").classList.add("show");
+          }
 
           render_black_card();
           render_submissions(true);

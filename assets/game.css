@@ -7,15 +7,20 @@
 :root {
   --background-colour: #121212;
   --text-colour: #ffffff;
-  --input-background: #1e1e1e;
-  --input-border: #3d3d3d;
+  --input-background: #232323;
+  --input-border: #404040;
   --input-text: #ffffff;
-  --input-placeholder: #3d3d3d;
+  --input-placeholder: #424242;
+  --input-disabled-bg: #181818;
+  --input-disabled-border: #363636;
+  --input-disabled-placeholder: #2c2c2c;
   --toggle-background: #2b2b2b;
   --toggle-thumb: #ffffff;
   --toggle-background-enabled: #3783f5;
   --button-background: #1571fa;
   --button-background-hover: #257cff;
+  --button-background-red: #f82020;
+  --button-background-red-hover: #f33030;
   --error-text: #ff5858;
   --card-bg-black: #000000;
   --card-txt-black: #ffffff;
@@ -31,6 +36,14 @@
   --card-group-bg: #2b2b2b;
   --card-glo-group: #00000080;
   --pname-green: #a2ffa2;
+  --packlist-bg: #1d1d1d;
+  --packlist-bg-hover: #222222;
+  --packlist-border: #2b2b2b;
+  --card-info-pane-bg: #1b1b1b;
+  --card-list-header-black: #161616;
+  --card-list-header-white: #2b2b2b;
+  --card-entry-hover-bg: #212121;
+  --card-entry-active-bg: #242424;
 }
 
 ::-webkit-scrollbar {
@@ -79,6 +92,14 @@ h1 {
   user-select: none;
 }
 
+h2 {
+  user-select: none;
+}
+
+h3 {
+  user-select: none;
+}
+
 input {
   background-color: var(--input-background);
   border: 1px solid var(--input-border);
@@ -88,12 +109,24 @@ input {
   padding: 0.25em;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
+  transition-duration: 250ms;
 }
 
 input::placeholder {
   color: var(--input-placeholder);
+  transition-duration: 250ms;
+  user-select: none;
 }
 
+input:disabled {
+  background-color: var(--input-disabled-bg);
+  border: 1px solid var(--input-disabled-border);
+  cursor: not-allowed;
+}
+
+input:disabled::placeholder {
+  color: var(--input-disabled-placeholder);
+}
 
 .bodypage {
   background-color: var(--background-colour);
@@ -226,8 +259,16 @@ input::placeholder {
   user-select: none;
 }
 
+.button.red {
+  background-color: var(--button-background-red);
+}
+
 .button:hover {
   background-color: var(--button-background-hover);
+}
+
+.button.red:hover {
+  background-color: var(--button-background-red-hover);
 }
 
 .error-text {
@@ -340,8 +381,12 @@ input::placeholder {
   margin-top: 1.15em;
 }
 
-.flex-end {
+.flex-bottom {
   flex-basis: 100%;
+}
+
+.flex-end {
+  margin-left: auto !important;
 }
 
 .buttons p {
@@ -475,4 +520,195 @@ input::placeholder {
   transform: scale(1.25);
   user-select: none;
   z-index: 10;
+}
+
+.waitpage {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+
+.packlist {
+  width: calc(100vw - 2em);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+  height: 100%;
+  background-color: var(--packlist-bg);
+  border-radius: 20px;
+  overflow-x: hidden;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+}
+
+.pack {
+  width: calc(100% - 1em);
+  border-bottom: 1px solid var(--packlist-border);
+  padding: 0.5em;
+  background-color: var(--packlist-bg);
+  transition-duration: 250ms;
+  margin: 0px;
+}
+
+.pack:first-of-type {
+  margin-top: 0.5em;
+  border-top: 1px solid var(--packlist-border);
+}
+
+.pack:hover {
+  background-color: var(--packlist-bg-hover);
+}
+
+.pack svg {
+  height: 1.5em;
+}
+
+.pack .button {
+  margin: 0px;
+  margin-left: auto;
+  margin-right: 0.25em;
+  font-size: 0.9em;
+}
+
+.pack-editor {
+  height: 0px;
+  flex-grow: 1;
+  width: calc(100vw - 2em);
+  margin: 1em;
+  border-radius: 20px;
+  background-color: var(--packlist-bg);
+  display: flex;
+  position: relative;
+}
+
+.card-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+
+.card-list .list-header, .card-list .card-entry {
+  width: calc(100% - 2.5em);
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid var(--packlist-border);
+  padding: 1em;
+  margin-left: 0.5em;
+  align-items: center;
+  transition-duration: 250ms;
+}
+
+.card-entry:hover {
+  background-color: var(--card-entry-hover-bg);
+}
+
+.card-entry:has(+.list-header), .card-entry:last-of-type {
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom: none;
+  margin-bottom: 0.5em;
+}
+
+.card-entry.active {
+  background-color: var(--card-entry-active-bg);
+}
+
+.card-entry h3 {
+  pointer-events: none;
+}
+
+.card-list .list-header {
+  border-radius: 20px;
+}
+
+.list-header-sticky {
+  position: sticky;
+  top: 0px;
+}
+
+.header-back-cover {
+  background: var(--packlist-bg);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: calc(0.5em + 20px);
+  border-top-left-radius: 20px;
+  z-index: -1;
+}
+
+.white .header-back-cover {
+  display: none;
+}
+
+.card-list .list-header:first-of-type {
+  margin-top: 0.5em;
+}
+
+.card-list .list-header.black {
+  background-color: var(--card-list-header-black);
+}
+
+.card-list .list-header.white {
+  background-color: var(--card-list-header-white);
+}
+
+.card-list h3 {
+  margin: 0px;
+}
+
+.info-pane {
+  background-color: var(--card-info-pane-bg);
+  border-left: 1px solid var(--packlist-border);
+  display: flex;
+  flex-direction: column;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  z-index: 2;
+}
+
+.info-pane .section {
+  padding: 1em;
+  padding-bottom: 2em;
+  min-width: 14em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--packlist-border);
+}
+
+.info-pane .section:last-of-type {
+  border-bottom: none;
+}
+
+.rapidfire {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+
+.rapidfire .inside {
+  width: 20em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--choice-bg);
+  padding: 4em;
+  padding-top: 2em;
+  border-radius: 20px;
+  align-items: center;
+}
+
+.rapidfire h2 {
+  margin: 0px;
+  margin-bottom: 0.5em;
 }

@@ -33,7 +33,7 @@
 
     <div class="lobbypage bodypage">
       <br>
-      <h1>cards against a manatee</h1>
+      <h1 style="width: 100vw;">cards against a manatee</h1>
       <br>
 
       <input type="text" class="player-name" placeholder="display name" style="margin-bottom: 0.5em; margin-top: 6em;"><br>
@@ -46,7 +46,7 @@
 
     <div class="waitpage bodypage">
       <br>
-      <h1>cards against a manatee</h1>
+      <h1 style="width: 100vw;">cards against a manatee</h1>
       <br>
 
       <img src="assets/manatee-seacow.gif">
@@ -58,13 +58,49 @@
         <h3>host wait area thing</h3>
 
         <p class="button" onclick="start_game()">start game</p>
+
+
+        <br>
+        <h2 style="margin: 0px;">settings</h2>
+        <br>
+
+        <h3 style="display: flex; gap: 10px; justify-content: center;" class="toggle-wrapper">
+          <svg class="toggle" viewBox="0 0 2 1" onclick="toggle_button(0)" ja_id="0">
+            <circle cx="0.5" cy="0.5" r="0.5" class="background" />
+            <circle cx="1.5" cy="0.5" r="0.5" class="background" />
+            <rect x="0.5" y="0" width="1" height="1" class="background" />
+            <circle cx="0.5" cy="0.5" r="0.5" class="thumb" />
+          </svg>
+        
+          <span style="transform: translate(0px, 0.25em)">manatee order: rotating</span>
+        </h3>
+
+        <h3 style="display: flex; gap: 10px; justify-content: center;" class="toggle-wrapper">
+          <svg class="toggle" viewBox="0 0 2 1" onclick="toggle_button(1)" ja_id="1">
+            <circle cx="0.5" cy="0.5" r="0.5" class="background" />
+            <circle cx="1.5" cy="0.5" r="0.5" class="background" />
+            <rect x="0.5" y="0" width="1" height="1" class="background" />
+            <circle cx="0.5" cy="0.5" r="0.5" class="thumb" />
+          </svg>
+        
+          <span style="transform: translate(0px, 0.25em)">random hand every time</span>
+        </h3>
+
+        <h3>number of cards in a hand:</h3>
+        <input type="number" class="hand-size" min="1" onchange="update_hand_size_setting()">
+
       </div>
+
+
+      <br>
+      <br>
+      <p class="button" style="margin-top: 0px;" onclick="open_card_picker()">choose card packs</p>
 
     </div>
 
     <div class="roundpage bodypage">
       <br>
-      <h1>cards against a manatee</h1>
+      <h1 style="width: 100vw;">cards against a manatee</h1>
       <br>
       <div class="black-card-wrapper">
 
@@ -80,8 +116,8 @@
         <p style="margin: 0px;" class="card-number defaulthide">choose up to <span class="card-number">1</span> card<span class="card-number-plural"></span>.</p>
         <p class="button endround defaulthide" onclick="end_round()">end round</p>
         <p class="button nextround defaulthide" onclick="next_round()">next round</p>
-        <p class="flex-end defaulthide plreadytext">players that are ready:</p>
-        <p class="flex-end defaulthide plwinnertext">player won! yay!</p>
+        <p class="flex-bottom defaulthide plreadytext">players that are ready:</p>
+        <p class="flex-bottom defaulthide plwinnertext">player won! yay!</p>
       </div>
       <div style="flex-grow: 1;"></div>
       <div class="choice-zone">
@@ -96,6 +132,62 @@
 
     </div>
 
+    <div class="cardpackpage bodypage">
+      <div style="display: flex; width: 100vw; height: 100vh; position: fixed; top: 0px; left: 0px; flex-direction: column;">
+        <br>
+        <h1>cards against a manatee</h1>
+        <h3>card pack picker</h3>
+        <p class="button" onclick="set_screen('waitpage')" style="margin-top: 0px; margin-bottom: 1em;">go back</p>
+
+        <div class="packlist">
+
+          
+
+        </div>
+      </div>
+    </div>
+
+    <div class="packeditorpage bodypage">
+      <div style="display: flex; width: 100vw; height: 100vh; position: fixed; top: 0px; left: 0px; flex-direction: column;">
+        <br>
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+          <h1>cards against a manatee</h1>
+          <h3 style="margin: 0px; margin-top: 0.2em;">card pack editor</h3>
+          <p class="button" onclick="open_card_picker()" style="margin: 0px;">go back</p>
+        </div>
+        
+        <div class="pack-editor">
+          <div class="card-list">
+
+            
+
+
+          </div>
+          <div class="info-pane">
+            <div class="section">
+              <div class="card white">
+                <h4>cards against a manatee</h4>
+                <h2>And for my next trick: the site is broken!</h2>
+              </div>
+            </div>
+            <div class="section">
+              <input type="text" placeholder="card name" class="card-name" onclick="render_current_card_selection()">
+              <input type="number" placeholder="max abount of cards" class="cards-amt" onclick="render_current_card_selection()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rapidfire" style="display: none;">
+      <div class="inside">
+        <h2>rapid fire</h2>
+        <input type="text" placeholder="card name" class="rf-card-name" >
+        <input type="number" placeholder="max abount of cards" class="rf-cards-amt">
+        <p class="button" onclick="leave_rapid_fire()" style="margin: 0px; margin-top: 1em;">leave rapid fire</p>
+      </div>
+    </div>
+
     <div class="templates">
 
       <div class="card white template">
@@ -104,6 +196,31 @@
       </div>
 
       <h3 class="playername template">player neame</h3>
+
+      <h3 style="display: flex; gap: 10px; align-items: center;" class="toggle-wrapper pack template">
+        <svg class="toggle" viewBox="0 0 2 1" onclick="toggle_pack('pack.json')" pa_id="pack.json">
+          <circle cx="0.5" cy="0.5" r="0.5" class="background" />
+          <circle cx="1.5" cy="0.5" r="0.5" class="background" />
+          <rect x="0.5" y="0" width="1" height="1" class="background" />
+          <circle cx="0.5" cy="0.5" r="0.5" class="thumb" />
+        </svg>
+        <span>pack name</span>
+        <p class="button" onclick="edit_pack('pack.json')">edit pack</p>
+      </h3>
+
+      
+      <div class="list-header template">
+        <h3>black cards</h3>
+        <p class="button rapid-fire flex-end" onclick="rapid_fire()" style="margin: 0px;">rapid fire</p>
+        <p class="button add-card" onclick="add_black_card()" style="margin: 0px;">add black card</p>
+        <div class="header-back-cover"></div>
+      </div>
+      
+
+      <div class="card-entry template">
+        <h3>card</h3>
+        <p class="button flex-end red" onclick="remove_card()" style="margin: 0px;">remove</p>
+      </div>
 
     </div>
 

@@ -116,7 +116,7 @@
         <p style="margin: 0px;" class="card-number defaulthide">choose up to <span class="card-number">1</span> card<span class="card-number-plural"></span>.</p>
         <p class="button endround defaulthide" onclick="end_round()">end round</p>
         <p class="button nextround defaulthide" onclick="next_round()">next round</p>
-        <p class="flex-bottom defaulthide plreadytext">players that are ready:</p>
+        <p class="flex-bottom defaulthide plreadytext">players that are ready:<br><br><span style="font-size: 0.9em; color: var(--subtext);">(when the player names are green, all players are ready)</span></p>
         <p class="flex-bottom defaulthide plwinnertext">player won! yay!</p>
       </div>
       <div style="flex-grow: 1;"></div>
@@ -150,7 +150,7 @@
     <div class="packeditorpage bodypage">
       <div style="display: flex; width: 100vw; height: 100vh; position: fixed; top: 0px; left: 0px; flex-direction: column;">
         <br>
-        <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <div class="packeditor-header" style="display: flex; gap: 20px; justify-content: center; align-items: center;">
           <h1>cards against a manatee</h1>
           <h3 style="margin: 0px; margin-top: 0.2em;">card pack editor</h3>
           <p class="button" onclick="open_card_picker()" style="margin: 0px;">go back</p>
@@ -186,6 +186,12 @@
         <input type="number" placeholder="max abount of cards" class="rf-cards-amt">
         <p class="button" onclick="leave_rapid_fire()" style="margin: 0px; margin-top: 1em;">leave rapid fire</p>
       </div>
+
+      <div class="card black">
+        <h4>cards against a manatee</h4>
+        <h2>And for my next trick: the site is broken!</h2>
+      </div>
+
     </div>
 
     <div class="templates">
@@ -211,8 +217,7 @@
       
       <div class="list-header template">
         <h3>black cards</h3>
-        <p class="button rapid-fire flex-end" onclick="rapid_fire()" style="margin: 0px;">rapid fire</p>
-        <p class="button add-card" onclick="add_black_card()" style="margin: 0px;">add black card</p>
+        <p class="button rapid-fire flex-end" onclick="rapid_fire()" style="margin: 0px;">add black card</p>
         <div class="header-back-cover"></div>
       </div>
       

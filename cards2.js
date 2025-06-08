@@ -34,6 +34,20 @@ var reselect_card = false;
 var rf_black = false;
 var rf_card = {};
 
+var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+var mobile = false
+
+
+
+
+if (windowHeight > windowWidth) {
+  var elem = document.createElement("link");
+  elem.setAttribute("rel", "stylesheet");
+  elem.setAttribute("href", "assets/mobile.css");
+  document.head.appendChild(elem);
+  mobile = true;
+}
 
 
 document.querySelector(".info-pane input.card-name").addEventListener("keydown", (e) => {
@@ -46,6 +60,17 @@ document.querySelector(".info-pane input.cards-amt").addEventListener("keydown",
   if (e.which == 13) {
     reselect_card = true;
     save_card_change();
+  }
+})
+
+document.querySelector(".player-name").addEventListener("keydown", (e) => {
+  if (e.which == 13) {
+    document.querySelector(".room-code").focus();
+  }
+});
+document.querySelector(".room-code").addEventListener("keydown", (e) => {
+  if (e.which == 13) {
+    join_game();
   }
 })
 
@@ -229,15 +254,13 @@ function make_cardlist_header(black) {
   if (black == true) {
     out_node.classList.add("black");
     out_node.querySelector("h3").innerHTML = "black cards";
-    out_node.querySelector(".add-card").setAttribute("onclick", "add_card(true)");
-    out_node.querySelector(".add-card").innerHTML = "add black card";
     out_node.querySelector(".rapid-fire").setAttribute("onclick", "rapid_fire(true)");
+    out_node.querySelector(".rapid-fire").innerHTML = "add black cards";
   } else {
     out_node.classList.add("white");
     out_node.querySelector("h3").innerHTML = "white cards";
-    out_node.querySelector(".add-card").setAttribute("onclick", "add_card(false)");
-    out_node.querySelector(".add-card").innerHTML = "add white card";
     out_node.querySelector(".rapid-fire").setAttribute("onclick", "rapid_fire(false)");
+    out_node.querySelector(".rapid-fire").innerHTML = "add white cards";
   }
 
   var real_out_node = document.createElement("div");
@@ -419,8 +442,6 @@ function entry_click(id, black, dont_save=false) {
 
   var card_data = {};
 
-  document.querySelector(".info-pane input.card-name").value = "";
-  document.querySelector(".info-pane input.cards-amt").value = "";
 
   try {
     document.querySelector(`.card-entry.active`).classList.remove("active");
@@ -428,25 +449,28 @@ function entry_click(id, black, dont_save=false) {
 
   }
   
+  setTimeout(() => {
 
-  if (black == true) {
-    card_data = cardpack_edit["black"][id];
-    document.querySelector(".info-pane input.cards-amt").disabled = false;
-    document.querySelector(".info-pane input.card-name").value = cardpack_edit["black"][id]["name"];
-    document.querySelector(".info-pane input.cards-amt").value = cardpack_edit["black"][id]["cards"];
-    render_info_card(cardpack_edit["black"][id]["name"], true);
-    
-    document.querySelector(`.card-entry.black[c-id="${id}"]`).classList.add("active");
-  } else {
-    card_data = cardpack_edit["white"][id];
-    document.querySelector(".info-pane input.cards-amt").disabled = true;
-    document.querySelector(".info-pane input.card-name").value = cardpack_edit["white"][id]["name"];
-    render_info_card(cardpack_edit["white"][id]["name"], false);
+    if (black == true) {
+      card_data = cardpack_edit["black"][id];
+      document.querySelector(".info-pane input.cards-amt").disabled = false;
+      document.querySelector(".info-pane input.card-name").value = cardpack_edit["black"][id]["name"];
+      document.querySelector(".info-pane input.cards-amt").value = cardpack_edit["black"][id]["cards"];
+      render_info_card(cardpack_edit["black"][id]["name"], true);
+      
+      document.querySelector(`.card-entry.black[c-id="${id}"]`).classList.add("active");
+    } else {
+      card_data = cardpack_edit["white"][id];
+      document.querySelector(".info-pane input.cards-amt").disabled = true;
+      document.querySelector(".info-pane input.cards-amt").value = "";
+      document.querySelector(".info-pane input.card-name").value = cardpack_edit["white"][id]["name"];
 
-    document.querySelector(`.card-entry.white[c-id="${id}"]`).classList.add("active");
-  }
+      render_info_card(cardpack_edit["white"][id]["name"], false);
+  
+      document.querySelector(`.card-entry.white[c-id="${id}"]`).classList.add("active");
+    }
 
-
+  }, 20);
 }
 
 function entry_hover(id, black) {
@@ -687,19 +711,21 @@ document.querySelector("input.rf-card-name").addEventListener("keydown", (e) => 
   }
 });
 document.querySelector("input.rf-card-name").addEventListener("keyup", (e) => {
-  render_info_card(card_text_process(document.querySelector("input.rf-card-name").value), rf_black);
+  render_info_card(document.querySelector("input.rf-card-name").value, rf_black);
 });
 document.querySelector("input.card-name").addEventListener("keyup", (e) => {
   var sel_black = false;
   if (selected_card["original"]["cards"]) {
     sel_black = true;
   }
-  render_info_card(card_text_process(document.querySelector("input.card-name").value), sel_black);
+  render_info_card(document.querySelector("input.card-name").value, sel_black);
 });
 
 document.querySelector("input.rf-cards-amt").addEventListener("keydown", (e) => {
   if (e.which == 13) {
     // hitted entered
+
+    rf_card["name"] = document.querySelector("input.rf-card-name").value;
     var cards_amt = document.querySelector("input.rf-cards-amt").value;
 
     cards_amt = parseInt(cards_amt);
@@ -913,6 +939,12 @@ function card_text_process(text_in) {
   text_out = text_out.replaceAll("_", `<span style="display: inline-block; transform: scale(1.1, 1);">_</span>`);
   // this makes every underscore just a little bit wider so they all become one big underscore
 
+  try {
+    text_out = twemoji.parse(text_out, { base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/' });
+  } catch (err) {
+    console.log("oops")
+  }
+
 
   return text_out
 }
@@ -999,7 +1031,7 @@ function render_submissions(explosions=false) {
       }
 
 
-      twemoji.parse(pl_node);
+      // twemoji.parse(pl_node);
 
       document.querySelector(".choice-zone").appendChild(pl_node);
 

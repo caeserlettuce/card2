@@ -31,7 +31,7 @@
   --card-wmk-white: #868686;
   --card-glo-white: #000000;
   --card-act-bg-white: #9dc5ff;
-  --card-act-wmk-white: #737373;
+  --card-act-wmk-white: #668089;
   --choice-bg: #1b1b1b;
   --card-group-bg: #2b2b2b;
   --card-glo-group: #00000080;
@@ -44,6 +44,11 @@
   --card-list-header-white: #2b2b2b;
   --card-entry-hover-bg: #212121;
   --card-entry-active-bg: #242424;
+  --dialog-background: #00000060;
+  --dialog-background-light: #ffffff60;
+  --subtext: #afafaf;
+  --card-width: 12.5rem;
+  --card-height: 17rem;
 }
 
 ::-webkit-scrollbar {
@@ -294,8 +299,8 @@ input:disabled::placeholder {
 }
 
 .card {
-  width: 12.5rem;
-  height: 17rem;
+  width: var(--card-width);
+  height: var(--card-height);
   border-radius: 20px;
   position: relative;
 }
@@ -311,6 +316,9 @@ input:disabled::placeholder {
   padding-top: 0.75em;
   user-select: none;
   word-wrap: break-word;
+  position: relative;
+  z-index: 5;
+  border-radius: 20px;
 }
 
 .card h4 {
@@ -321,6 +329,11 @@ input:disabled::placeholder {
   font-size: 0.6em;
   margin: 0px;
   z-index: 1;
+}
+
+.card .emoji {
+  transform: translate(0.15em);
+  height: 1.5em;
 }
 
 .card.black {
@@ -360,6 +373,7 @@ input:disabled::placeholder {
   transform: scale(105%, 105%);
   background-color: var(--card-act-bg-white);
   box-shadow: var(--card-glo-white) 0px 0px 10px;
+  z-index: 2;
 }
 
 .card.active h4 {
@@ -368,7 +382,7 @@ input:disabled::placeholder {
 
 .card.active:hover {
   box-shadow: var(--card-glo-white) 0px 0px 10px;
-  z-index: 0;
+  z-index: 2;
 }
 
 .buttons {
@@ -618,6 +632,7 @@ input:disabled::placeholder {
 
 .card-entry h3 {
   pointer-events: none;
+  text-align: left;
 }
 
 .card-list .list-header {
@@ -685,6 +700,10 @@ input:disabled::placeholder {
   border-bottom: none;
 }
 
+.info-pane .card {
+  z-index: 40;
+}
+
 .rapidfire {
   width: 100vw;
   height: 100vh;
@@ -711,4 +730,18 @@ input:disabled::placeholder {
 .rapidfire h2 {
   margin: 0px;
   margin-bottom: 0.5em;
+}
+
+.rapidfire {
+  background-color: var(--dialog-background);
+  backdrop-filter: blur(6px);
+  z-index: 20;
+}
+
+.rapidfire .inside {
+  margin-left: calC(1rem + var(--card-width));
+}
+
+.rapidfire .card {
+  margin-left: 0.5em;
 }

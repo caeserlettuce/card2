@@ -398,10 +398,19 @@ function render_info_card(name, black) {
     document.querySelector(".info-pane .card").classList.remove("white");
     document.querySelector(".info-pane .card").classList.add("black");
     document.querySelector(".info-pane .card h2").innerHTML = card_text_process(name);
+
+    document.querySelector(".rapidfire .card").classList.remove("white");
+    document.querySelector(".rapidfire .card").classList.add("black");
+    document.querySelector(".rapidfire .card h2").innerHTML = card_text_process(name);
+    
   } else {
     document.querySelector(".info-pane .card").classList.add("white");
     document.querySelector(".info-pane .card").classList.remove("black");
     document.querySelector(".info-pane .card h2").innerHTML = card_text_process(name);
+
+    document.querySelector(".rapidfire .card").classList.add("white");
+    document.querySelector(".rapidfire .card").classList.remove("black");
+    document.querySelector(".rapidfire .card h2").innerHTML = card_text_process(name);
 
   }
 }
@@ -680,7 +689,7 @@ function rapid_fire(black) {
     document.querySelector("input.rf-card-name").focus();
   }, 20);
   
-
+  render_info_card("", black);
 
   document.querySelector(".rapidfire").style.display = "";
 }

@@ -1313,11 +1313,6 @@ function interval_function() {
                     pname_node.classList.add("green");
                   }
 
-                  /*if (round_data["users ready"].length == round_data["players"].length - 1) {
-                    // all players ready!
-                    pname_node.classList.add("green");
-                  }*/
-
                   document.querySelector(".choice-zone").appendChild(pname_node);
                 }                
               }

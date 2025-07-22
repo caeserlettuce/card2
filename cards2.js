@@ -1298,16 +1298,19 @@ function interval_function() {
             
             document.querySelector(".choice-zone").innerHTML = "";
 
-            for (p in round_data["users ready"]) {
+            for (p in round_data["players"]) {
               var pname_node = document.querySelector(".templates .playername").cloneNode(true);
 
               pname_node.classList.remove("template");
-              pname_node.innerHTML = `${round_data["users ready"][p]}`;
-
-              if (round_data["users ready"].length == round_data["players"].length - 1) {
-                // all players ready!
+              pname_node.innerHTML = `${round_data["players"][p]}`;
+              if (round_data["users ready"].includes(round_data["players"][p])) {
                 pname_node.classList.add("green");
               }
+
+              /*if (round_data["users ready"].length == round_data["players"].length - 1) {
+                // all players ready!
+                pname_node.classList.add("green");
+              }*/
 
               document.querySelector(".choice-zone").appendChild(pname_node);
 

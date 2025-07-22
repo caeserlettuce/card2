@@ -139,15 +139,19 @@ function toggle_button(id) {
     document.querySelector(`.toggle[ja_id="${id}"]`).classList.add("enabled");      // ENABLING
     if (id == 0) {
       set_setting("rotating", true);
+      document.querySelector(`.toggle-wrapper span[ja_id="0"]`).innerHTML = "manatee order: rotating";
     } else if (id == 1) {
       set_setting("random hand", true);
+      document.querySelector(`.toggle-wrapper span[ja_id="1"]`).innerHTML = "random hand every time";
     }
   } else {
     document.querySelector(`.toggle[ja_id="${id}"]`).classList.remove("enabled");   // DISABLING
     if (id == 0) {
       set_setting("rotating", false);
+      document.querySelector(`.toggle-wrapper span[ja_id="0"]`).innerHTML = "manatee order: winner";
     } else if (id == 1) {
       set_setting("random hand", false);
+      document.querySelector(`.toggle-wrapper span[ja_id="1"]`).innerHTML = "keep cards between rounds";
     }
   }
 }

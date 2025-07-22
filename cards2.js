@@ -1053,8 +1053,12 @@ function render_submissions(explosions=false) {
         pl_node.setAttribute("onclick", `vote_card('${pl}')`);
 
       }
-
-      var winner_crown = `${pl}`;
+      if(explosions == true) {
+        var winner_crown = `${pl}`;
+      }
+      else {
+        var winner_crown = ``;
+      }
       var is_winner = false;
 
       if (round_data["winner"]) {
@@ -1311,28 +1315,30 @@ function interval_function() {
         if (round_data["is manatee"] == true) {
           // player list ready list player
 
-          if (jstr(round_data["users ready"]) != jstr(prev_round_data["users ready"])) {
-            
-            document.querySelector(".choice-zone").innerHTML = "";
 
-            for (p in round_data["users ready"]) {
-              var pname_node = document.querySelector(".templates .playername").cloneNode(true);
 
-              pname_node.classList.remove("template");
-              pname_node.innerHTML = `${round_data["users ready"][p]}`;
+          if (typeof round_data["users ready"] == typeof []) {
+            if (jstr(round_data["users ready"]) != jstr(prev_round_data["users ready"])) {
+              
+              document.querySelector(".choice-zone").innerHTML = "";
 
-              if (round_data["users ready"].length == round_data["players"].length - 1) {
-                // all players ready!
-                pname_node.classList.add("green");
+              for (p in round_data["players"]) {
+
+                if (round_data["players"][p] != round_data["manatee"]) {
+                  var pname_node = document.querySelector(".templates .playername").cloneNode(true);
+
+                  pname_node.classList.remove("template");
+                  pname_node.innerHTML = `${round_data["players"][p]}`;
+
+                  if (round_data["users ready"].includes(round_data["players"][p])) {
+                    pname_node.classList.add("green");
+                  }
+
+                  document.querySelector(".choice-zone").appendChild(pname_node);
+                }                
               }
-
-              document.querySelector(".choice-zone").appendChild(pname_node);
-
             }
-            
-
           }
-
         }
 
       } else if (round_stage == 1) {

@@ -1294,29 +1294,34 @@ function interval_function() {
         if (round_data["is manatee"] == true) {
           // player list ready list player
 
-          if (jstr(round_data["users ready"]) != jstr(prev_round_data["users ready"])) {
-            
-            document.querySelector(".choice-zone").innerHTML = "";
+          
 
-            for (p in round_data["players"]) {
-              var pname_node = document.querySelector(".templates .playername").cloneNode(true);
+          if (typeof round_data["users ready"] != typeof []) {
+            if (jstr(round_data["users ready"]) != jstr(prev_round_data["users ready"])) {
+              
+              document.querySelector(".choice-zone").innerHTML = "";
 
-              pname_node.classList.remove("template");
-              pname_node.innerHTML = `${round_data["players"][p]}`;
-              if (round_data["users ready"].includes(round_data["players"][p])) {
-                pname_node.classList.add("green");
+              for (p in round_data["players"]) {
+                var pname_node = document.querySelector(".templates .playername").cloneNode(true);
+
+                pname_node.classList.remove("template");
+                pname_node.innerHTML = `${round_data["players"][p]}`;
+
+                if (round_data["users ready"].includes(round_data["players"][p])) {
+                  pname_node.classList.add("green");
+                }
+
+                /*if (round_data["users ready"].length == round_data["players"].length - 1) {
+                  // all players ready!
+                  pname_node.classList.add("green");
+                }*/
+
+                document.querySelector(".choice-zone").appendChild(pname_node);
+
               }
-
-              /*if (round_data["users ready"].length == round_data["players"].length - 1) {
-                // all players ready!
-                pname_node.classList.add("green");
-              }*/
-
-              document.querySelector(".choice-zone").appendChild(pname_node);
+              
 
             }
-            
-
           }
 
         }

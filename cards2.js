@@ -38,6 +38,7 @@ var windowWidth = window.innerWidth || document.documentElement.clientWidth || d
 var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 var mobile = false
 
+var get_out_tm = false;
 
 
 
@@ -77,10 +78,27 @@ document.querySelector(".room-code").addEventListener("keydown", (e) => {
 
 var localstorage_settings = JSON.parse(localStorage.getItem("manatee_settings"));
 
+console.log("HELLO", localstorage_settings);
+
 if (typeof localstorage_settings == typeof {} && localstorage_settings != null) {
 
+  if (typeof localstorage_settings["username"] != typeof "hello") {
+    localstorage_settings["username"] = false;
+    console.log("username missing from localstorage!");
+  }
+  if (typeof localstorage_settings["room code"] != typeof "hello") {
+    localstorage_settings["room code"] = false;
+    console.log("room code missing from localstorage!");
+  }
+
   manatee_settings = {...localstorage_settings};
-} 
+} else {
+  console.log("NOOOOO")
+  manatee_settings = {
+    "username": false,
+    "room code": false
+  }
+}
 
 function clear_settings() {
   localStorage.removeItem("manatee_settings");
@@ -798,18 +816,26 @@ function join_game() {
     console.log(text)
     
     if (text["verified"] == true) {
-      game_stage = 1;
+        get_out_tm = false;
+        console.log("get out has been reversed. stay in!")
 
-      if (text["is host"] == true) {
-        // is host
-        document.querySelector(".host-wait").style.display = "";
-        document.querySelector(".nonhost-wait").style.display = "none";
+      if (game_stage == 2) {
+
       } else {
-        document.querySelector(".host-wait").style.display = "none";
-        document.querySelector(".nonhost-wait").style.display = "";
-      }
+        game_stage = 1;
 
-      set_screen("waitpage");
+        if (text["is host"] == true) {
+          // is host
+          document.querySelector(".host-wait").style.display = "";
+          document.querySelector(".nonhost-wait").style.display = "none";
+        } else {
+          document.querySelector(".host-wait").style.display = "none";
+          document.querySelector(".nonhost-wait").style.display = "";
+        }
+
+        set_screen("waitpage");
+      }
+      
 
     } else {  // NOT verified
       document.querySelector(".lobbypage .error-text").innerHTML = text["reason"];
@@ -1116,6 +1142,7 @@ function interval_function() {
           set_screen("lobbypage");
           game_stage = 1;
           console.log("get out");
+          get_out_tm = true;
         }
         
         
@@ -1149,7 +1176,7 @@ function interval_function() {
       console.error("[GET] API down!", error);
     });
 
-  } else if (game_stage == 2) {
+  } else if (game_stage == 2 && get_out_tm == false) {
 
 
     if (document.querySelector(".username-corner").innerHTML != `${manatee_settings["username"]}` ) {

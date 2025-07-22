@@ -37,6 +37,9 @@ var rf_card = {};
 var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 var mobile = false
+var mobile_interval;
+var name_bounding_box;
+var prev_bounding_box;
 
 var get_out_tm = false;
 
@@ -48,6 +51,20 @@ if (windowHeight > windowWidth) {
   elem.setAttribute("href", "assets/mobile.css");
   document.head.appendChild(elem);
   mobile = true;
+
+  mobile_interval = setInterval( () => {
+
+    var name_bounding_box = document.querySelector(".username-corner").getBoundingClientRect();
+
+    var name_height = name_bounding_box.top + name_bounding_box.height + 15;
+
+      document.querySelector(".mobile-scroll-fix").innerHTML = `
+      .roundpage {
+          max-height: ${windowHeight}px;
+      }
+          `;
+
+  }, 1000)
 }
 
 

@@ -1036,8 +1036,12 @@ function render_submissions(explosions=false) {
         pl_node.setAttribute("onclick", `vote_card('${pl}')`);
 
       }
-
-      var winner_crown = `${pl}`;
+      if(explosions == true) {
+        var winner_crown = `${pl}`;
+      }
+      else {
+        var winner_crown = ``;
+      }
       var is_winner = false;
 
       if (round_data["winner"]) {

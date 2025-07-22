@@ -2,7 +2,10 @@
   src: url(/assets/Roboto-Bold.ttf);
   font-family: roboto_bolg;
 }
-
+@font-face {
+  src: url(/assets/papyrus.ttf);
+  font-family: papyrus;
+}
 
 :root {
   --background-colour: #121212;

@@ -7,3 +7,7 @@ packs.json
 /cards/evil_cards.json
 /cards/2025_pack.json
 /cards/homer_card.json
+/cards/friend_cards.json
+/cards/.DS_Store
+.DS_Store
+/__pycache__

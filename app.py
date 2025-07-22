@@ -62,7 +62,7 @@ class bc:
     UNDERLINE = '\033[4m'
 
 def exit_handler():
-    print(bc.CYAN + "\gvgk." + bc.END)
+    print(bc.CYAN + "gvgk." + bc.END)
 
 
 

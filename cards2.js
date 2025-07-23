@@ -10,6 +10,9 @@ var prev_round_stage = -1;
 var cards_submitted = [];
 var cards_by_id_submitted = [];
 
+var joined_players = {};
+var prev_joined_players = {};
+
 var round_data = {};
 var prev_round_data = {};
 
@@ -132,6 +135,16 @@ function jcopy(obj_in) {
 
 function jstr(obj_in) {
   return JSON.stringify(obj_in);
+}
+
+
+//this is for updating the list of players ready in the hosts' intro screen
+function update_joined_players() {
+  /*var pname_node = document.querySelector(".templates .playername").cloneNode(true);
+
+  pname_node.classList.remove("template");
+  pname_node.innerHTML = `${player}`;
+  document.querySelector("player-list").appendChild(pname_node);*/
 }
 
 function set_settings_init(settings_in) {
@@ -849,7 +862,6 @@ function join_game() {
           document.querySelector(".host-wait").style.display = "none";
           document.querySelector(".nonhost-wait").style.display = "";
         }
-
         set_screen("waitpage");
       }
       
@@ -1309,8 +1321,23 @@ function interval_function() {
 
 
       // live visual updates below
+      //TODO: make this work in the wait screen
+      /*if () {
+      //list of joined players
+        if (jstr(round_data["players"]) != jstr(prev_round_data["players"])) {
+          for (p in round_data["players"]) {
+            var pname_node = document.querySelector(".templates .playername").cloneNode(true);
 
-      if (round_stage == 0) {
+            pname_node.classList.remove("template");
+            pname_node.innerHTML = `${round_data["players"][p]}`;
+            if(is_host) {
+              document.querySelector("host-player-list").appendChild(pname_node);
+            } else {
+              document.querySelector("nonhost-player-list").appendChild(pname_node);
+            }
+          }
+        }
+      }else*/ if (round_stage == 0) {
 
         if (round_data["is manatee"] == true) {
           // player list ready list player
@@ -1342,7 +1369,7 @@ function interval_function() {
         }
 
       } else if (round_stage == 1) {
-
+        
 
       } else if (round_stage == 2) {
 

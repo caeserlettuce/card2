@@ -1321,23 +1321,7 @@ function interval_function() {
 
 
       // live visual updates below
-      //TODO: make this work in the wait screen
-      /*if () {
-      //list of joined players
-        if (jstr(round_data["players"]) != jstr(prev_round_data["players"])) {
-          for (p in round_data["players"]) {
-            var pname_node = document.querySelector(".templates .playername").cloneNode(true);
-
-            pname_node.classList.remove("template");
-            pname_node.innerHTML = `${round_data["players"][p]}`;
-            if(is_host) {
-              document.querySelector("host-player-list").appendChild(pname_node);
-            } else {
-              document.querySelector("nonhost-player-list").appendChild(pname_node);
-            }
-          }
-        }
-      }else*/ if (round_stage == 0) {
+      if (round_stage == 0) {
 
         if (round_data["is manatee"] == true) {
           // player list ready list player
@@ -1449,6 +1433,46 @@ fetch('/loading-status', {
 
 
 }
+//TODO: make this work
+/*function waitpage_update() {
+  var post_data = JSON.parse(JSON.stringify(manatee_settings));
+  fetch('/game-status', {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(post_data)
+    })
+    .then(function (response) {
+      return response.json();
+    }).then(function (text) {
+      // console.log(text)
+      round_data = JSON.parse(JSON.stringify(text))
+
+      //list of joined players
+      if (jstr(round_data["players"]) != jstr(prev_round_data["players"])) {
+        for (p in round_data["players"]) {
+          var pname_node = document.querySelector(".templates .playername").cloneNode(true);
+
+          pname_node.classList.remove("template");
+          pname_node.innerHTML = `${round_data["players"][p]}`;
+          if(is_host) {
+            document.querySelector("host-player-list").appendChild(pname_node);
+          } else {
+            document.querySelector("nonhost-player-list").appendChild(pname_node);
+          }
+        }
+      }
+
+      prev_round_data = JSON.parse(JSON.stringify(round_data));
+      if(round_data["game running"]) {
+        clearInterval(waitpage_update);
+      }
+    }).catch((error) => {
+      console.error("[GET] API down!", error);
+    });
+}
+
+waitpage_update();
+var lobby_tick_interval = setInterval(waitpage_update, 1000);*/
 
 interval_function();
 var game_tick_interval = setInterval( interval_function, 1000);
